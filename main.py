@@ -1,17 +1,24 @@
 import sys, shutil
-from PySide6.QtWidgets import QMainWindow, QApplication, QFileDialog, QMessageBox
+from PySide6.QtWidgets import QMainWindow, QApplication, QFileDialog, QMessageBox, QCheckBox
 from PySide6.QtCore import QUrl
 from PySide6.QtGui import QDesktopServices
 
 from UI.file_organiser_ui import Ui_file_organiser
+from Widgets.add_file_type import AddFileType
 
 class FileBrowser (QMainWindow, Ui_file_organiser):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
 
+        # counter used in the add_file_type method
+        self.checkboxes_added = 0
+
         # Initialises an empty file filter variable that will be used to determine what files to show
         self.file_filter = ''
+
+        # if the add button is clicked it will allow the user to add a file type for the filter
+        self.pb_add.clicked.connect(self.add_file_type)
 
         # if the browse button is clicked it will run the browse file method
         self.pb_browse.clicked.connect(self.browse_file)
@@ -28,6 +35,23 @@ class FileBrowser (QMainWindow, Ui_file_organiser):
         self.cb_jpg.stateChanged.connect(self.check_states)
         self.cb_mp4.stateChanged.connect(self.check_states)
         self.cb_mov.stateChanged.connect(self.check_states)
+
+    '''
+        Initialises a new AddFileType object
+        executes the object code
+    '''
+    def add_file_type(self):
+        user_enter = AddFileType()
+        user_enter.exec()
+
+        # if the checkboxes added is an even number it adds to the top row, odd adds to the bottom
+        if self.checkboxes_added % 2 == 0:
+            self.hl_top.addWidget(user_enter.new_checkbox)
+            self.checkboxes_added += 1
+        else:
+            self.hl_bottom.addWidget(user_enter.new_checkbox)
+            self.checkboxes_added += 1
+
 
     # allows the user to browse their system files and will show the file_filter files if any boxes are checked
     def browse_file(self):

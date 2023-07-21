@@ -48,7 +48,7 @@
           <number>35</number>
          </property>
          <item row="0" column="0">
-          <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <layout class="QHBoxLayout" name="hl_top">
            <item>
             <widget class="QCheckBox" name="cb_mp3">
              <property name="text">
@@ -80,7 +80,7 @@
           </layout>
          </item>
          <item row="1" column="0">
-          <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <layout class="QHBoxLayout" name="hl_bottom">
            <item>
             <widget class="QCheckBox" name="cb_pdf">
              <property name="text">
@@ -112,7 +112,14 @@
           </layout>
          </item>
          <item row="2" column="0">
-          <layout class="QHBoxLayout" name="horizontalLayout_6">
+          <layout class="QHBoxLayout" name="hl_buttons">
+           <item>
+            <widget class="QPushButton" name="pb_add">
+             <property name="text">
+              <string>Add</string>
+             </property>
+            </widget>
+           </item>
            <item>
             <widget class="QPushButton" name="pb_browse">
              <property name="text">
@@ -142,7 +149,7 @@
      <x>0</x>
      <y>0</y>
      <width>487</width>
-     <height>20</height>
+     <height>23</height>
     </rect>
    </property>
   </widget>
