@@ -1,5 +1,5 @@
 import sys, shutil
-from PySide6.QtWidgets import QMainWindow, QApplication, QFileDialog, QMessageBox, QCheckBox
+from PySide6.QtWidgets import QMainWindow, QApplication, QFileDialog, QMessageBox
 from PySide6.QtCore import QUrl
 from PySide6.QtGui import QDesktopServices
 
@@ -12,7 +12,7 @@ class FileBrowser (QMainWindow, Ui_file_organiser):
         self.setupUi(self)
 
         # counter used in the add_file_type method
-        self.checkboxes_added = 0
+        self.checkbox_counter = 0
 
         # Initialises an empty file filter variable that will be used to determine what files to show
         self.file_filter = ''
@@ -26,6 +26,9 @@ class FileBrowser (QMainWindow, Ui_file_organiser):
         # if the organise button is clicked it will run the organise file method
         self.pb_organise.clicked.connect(self.organise_file)
 
+        # creates a list of the checkbox widgets which we can add more to
+        self.checkboxes = [self.cb_mp3, self.cb_wav, self.cb_pdf, self.cb_txt, self.cb_png, self.cb_jpg, self.cb_mp4, self.cb_mov]
+
         # if any of the checkboxes are checked it will run the check_states method
         self.cb_mp3.stateChanged.connect(self.check_states)
         self.cb_wav.stateChanged.connect(self.check_states)
@@ -38,26 +41,33 @@ class FileBrowser (QMainWindow, Ui_file_organiser):
 
     '''
         Initialises a new AddFileType object
-        executes the object code
+        executes the add_file_type code
     '''
     def add_file_type(self):
-        user_enter = AddFileType()
-        user_enter.exec()
+        self.user_checkbox = AddFileType()
+        self.user_checkbox.exec()
+
+        # initialise a new checkbox from the AddFileType object
+        new_checkbox = self.user_checkbox.new_checkbox
 
         # if the checkboxes added is an even number it adds to the top row, odd adds to the bottom
-        if self.checkboxes_added % 2 == 0:
-            self.hl_top.addWidget(user_enter.new_checkbox)
-            self.checkboxes_added += 1
+        if self.checkbox_counter % 2 == 0:
+            self.hl_top.addWidget(new_checkbox)
         else:
-            self.hl_bottom.addWidget(user_enter.new_checkbox)
-            self.checkboxes_added += 1
+            self.hl_bottom.addWidget(new_checkbox)
 
+        # add 1 to the checkbox counter and add the new checkbox to the checkboxes list
+        self.checkbox_counter += 1
+        self.checkboxes.append(new_checkbox)
+
+        # if the state changes for the new checkbox, run the check states method
+        new_checkbox.stateChanged.connect(self.check_states)
 
     # allows the user to browse their system files and will show the file_filter files if any boxes are checked
     def browse_file(self):
         files = QFileDialog.getOpenFileNames(
             caption='Select a file', # shows what text appears at the top of the windw
-            dir='Qt/File_Organiser/File_Folder', # initialises the directory we display
+            dir='Qt_File_Organiser/File_Folder', # initialises the directory we display
             filter=self.file_filter # uses the filter list to only show files of a certain type
         )
         self.files_list = files[:-1]
@@ -67,7 +77,7 @@ class FileBrowser (QMainWindow, Ui_file_organiser):
         # Open a file dialog to select or create a new folder
         folder_path = QFileDialog.getExistingDirectory(
             caption='Select a folder',  # Title of the window
-            dir='Qt/File_Organiser/File_Folder',  # Initial directory displayed
+            dir='Qt_File_Organiser/File_Folder',  # Initial directory displayed
             options=QFileDialog.ShowDirsOnly  # Show only directories, not files
         )
 
@@ -87,11 +97,8 @@ class FileBrowser (QMainWindow, Ui_file_organiser):
         QDesktopServices.openUrl(url)
                     
     def check_states(self):
-        # creates a list of the checkbox widgets
-        self.checkboxes = [self.cb_mp3, self.cb_wav, self.cb_pdf, self.cb_txt, self.cb_png, self.cb_jpg, self.cb_mp4, self.cb_mov]
         # This extracts the file extension from the checkbox text, and creates a filter string with a single element
         self.file_filter = ' '.join(['*' + checkbox.text().split('.')[-1] for checkbox in self.checkboxes if checkbox.isChecked()])
-
 
 #creates an instance of QApplication and executes the program
 if __name__ == '__main__':

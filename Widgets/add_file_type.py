@@ -25,7 +25,7 @@ class AddFileType (QDialog, Ui_add_file_type):
     def ok_button(self):
         self.user_text = self.le_user_input.text()
         self.new_checkbox = QCheckBox()
-        self.new_checkbox.setObjectName(self.user_text)
+        self.new_checkbox.setObjectName(f'cb_{self.user_text[2:]}')
         self.new_checkbox.setText(f'{self.user_text[1:]}')
         self.accept()
 
